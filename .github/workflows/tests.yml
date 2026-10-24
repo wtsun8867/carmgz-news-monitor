@@ -8,10 +8,8 @@ permissions:
   contents: read
 jobs:
   test:
-    runs-on: ${{ matrix.os }}
-    strategy:
-      matrix:
-        os: [ubuntu-latest, windows-latest, macos-latest]
+    # Ubuntu only: the repository is private, and Windows/macOS minutes cost more.
+    runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
       - uses: actions/checkout@v4
@@ -21,8 +19,7 @@ jobs:
         with:
           python-version: '3.12'
       - run: python -m unittest discover -s tests -q
-      - name: Strict Windows cp1252 console regression
-        if: runner.os == 'Windows'
+      - name: Strict cp1252 console regression (Windows console encoding)
         env:
           PYTHONIOENCODING: cp1252:strict
         run: python -m unittest discover -s tests -q
